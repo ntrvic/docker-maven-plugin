@@ -140,8 +140,9 @@ public class LogRequestor extends Thread implements LogGetHandle {
             throw new LogCallback.DoneException();
         }
         Timestamp ts = new Timestamp(matcher.group(1));
+        String logFile = null;
         String logTxt = matcher.group(2);
-        callback.log(type, ts, logTxt);
+        callback.log(type, ts, logTxt, logFile);
     }
 
     private int extractLength(byte[] b) {

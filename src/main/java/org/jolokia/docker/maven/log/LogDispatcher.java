@@ -15,6 +15,9 @@ package org.jolokia.docker.maven.log;/*
  * limitations under the License.
  */
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.*;
 
@@ -59,13 +62,13 @@ public class LogDispatcher {
     public synchronized void fetchContainerLog(String id, ContainerLogOutputSpec spec) {
         outputSpecs.put(id, spec);
 
-        dockerAccess.getLogSync(id,createLogCallBack(id));
+        dockerAccess.getLogSync(id, createLogCallBack(id));
     }
 
     private LogCallback createLogCallBack(final String id) {
         return new LogCallback() {
             @Override
-            public void log(int type, Timestamp timestamp, String txt) {
+            public void log(int type, Timestamp timestamp, String txt, String logFile) {
                 addLogEntry(new LogEntry(id, type, timestamp, txt));
             }
 
@@ -86,7 +89,11 @@ public class LogDispatcher {
         }
 
         // FIX me according to spec
-        print(spec.getPrompt(withColor,logEntry.getTimestamp()) + logEntry.getText());
+        if(spec.getFile() == null){
+            print(spec.getPrompt(withColor,logEntry.getTimestamp()) + logEntry.getText());
+        } else {
+            writeToFile(spec.getPrompt(withColor, logEntry.getTimestamp()) + logEntry.getText(), spec.getFile());
+        }
     }
 
     private void printError(String e) {
@@ -98,6 +105,18 @@ public class LogDispatcher {
     private void print(String line) {
         for (PrintStream ps : printStreams) {
             ps.println(line);
+        }
+    }
+
+    private void writeToFile(String line, String file){
+        BufferedWriter output;
+        try {
+            output = new BufferedWriter(new FileWriter(file, true));
+            output.newLine();
+            output.append(line);
+            output.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

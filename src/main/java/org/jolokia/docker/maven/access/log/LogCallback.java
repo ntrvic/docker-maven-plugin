@@ -35,7 +35,7 @@ public interface LogCallback {
      * @param txt log output
      * @throws CancellationException if thrown will stop the logging.
      */
-    void log(int type, Timestamp timestamp, String txt) throws DoneException;
+    void log(int type, Timestamp timestamp, String txt, String logFile) throws DoneException;
 
     /**
      * Method called in case on an error when reading the logs

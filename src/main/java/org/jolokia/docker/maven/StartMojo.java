@@ -162,7 +162,7 @@ public class StartMojo extends AbstractDockerMojo {
                     final Pattern pattern = Pattern.compile(logPattern);
                     logHandle = docker.getLogAsync(containerId, new LogCallback() {
                         @Override
-                        public void log(int type, Timestamp timestamp, String txt) throws LogCallback.DoneException {
+                        public void log(int type, Timestamp timestamp, String txt, String logFile) throws LogCallback.DoneException {
                             if (pattern.matcher(txt).find()) {
                                 detected = true;
                                 throw new LogCallback.DoneException();

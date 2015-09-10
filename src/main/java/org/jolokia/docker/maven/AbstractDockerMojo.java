@@ -301,12 +301,18 @@ public abstract class AbstractDockerMojo extends AbstractMojo implements Context
         LogConfiguration logConfig = extractLogConfiguration(imageConfiguration);
 
         addLogFormat(builder, logConfig);
+        addLogFile(builder, logConfig.getLogFileLocation());
         addPrefix(builder, logConfig.getPrefix(), imageConfiguration.getAlias(), containerId);
 
         builder.containerId(containerId)
                 .color(logConfig.getColor());
 
         return builder.build();
+    }
+
+    private void addLogFile(ContainerLogOutputSpec.Builder builder, String logFileLocation){
+        String fileLocation = logFileLocation;
+        builder.logFile(fileLocation);
     }
 
     private void addPrefix(ContainerLogOutputSpec.Builder builder, String logPrefix, String alias, String containerId) {
