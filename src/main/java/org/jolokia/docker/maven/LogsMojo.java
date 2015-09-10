@@ -58,6 +58,7 @@ public class LogsMojo extends AbstractDockerMojo {
     }
 
     private void doLogging(LogDispatcher logDispatcher, ImageConfiguration image, String container) {
+        logDispatcher.addLogOutPutStreams(container, getContainerLogSpec(container, image));
         if (follow) {
             logDispatcher.trackContainerLog(container, getContainerLogSpec(container, image));
         } else {

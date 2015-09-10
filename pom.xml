@@ -4,9 +4,9 @@
     <maven>3.2.1</maven>
   </prerequisites>
 
-  <groupId>org.jolokia</groupId>
-  <artifactId>docker-maven-plugin</artifactId>
-  <version>0.13.4-SNAPSHOT</version>
+  <groupId>sample.plugin</groupId>
+  <artifactId>docker-maven-plugin-test2</artifactId>
+  <version>0.13.5-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>maven-docker-plugin</name>

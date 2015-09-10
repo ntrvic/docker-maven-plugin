@@ -133,6 +133,10 @@ public abstract class AbstractDockerMojo extends AbstractMojo implements Context
     /** @parameter property = "docker.maxConnections" default-value = "100" */
     private int maxConnections;
 
+    // maximum connection to use in parallel for connecting the docker host
+    /** @parameter property = "docker.logFile" default-value = "100" */
+    private String logFile;
+
     // property file to write out with port mappings
     /** @parameter */
     protected String portPropertyFile;
@@ -290,7 +294,6 @@ public abstract class AbstractDockerMojo extends AbstractMojo implements Context
         LogDispatcher dispatcher = (LogDispatcher) getPluginContext().get(CONTEXT_KEY_LOG_DISPATCHER);
         if (dispatcher == null) {
             dispatcher = new LogDispatcher(docker, useColor);
-            dispatcher.addLogOutputStream(System.out);
             getPluginContext().put(CONTEXT_KEY_LOG_DISPATCHER, dispatcher);
         }
         return dispatcher;
@@ -301,12 +304,18 @@ public abstract class AbstractDockerMojo extends AbstractMojo implements Context
         LogConfiguration logConfig = extractLogConfiguration(imageConfiguration);
 
         addLogFormat(builder, logConfig);
+        addLogFile(builder, logConfig.getFileLocation());
         addPrefix(builder, logConfig.getPrefix(), imageConfiguration.getAlias(), containerId);
 
         builder.containerId(containerId)
                 .color(logConfig.getColor());
 
         return builder.build();
+    }
+
+    private void addLogFile(ContainerLogOutputSpec.Builder builder, String logFile){
+        String file = logFile;
+        builder.file(file);
     }
 
     private void addPrefix(ContainerLogOutputSpec.Builder builder, String logPrefix, String alias, String containerId) {
