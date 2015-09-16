@@ -290,7 +290,6 @@ public abstract class AbstractDockerMojo extends AbstractMojo implements Context
         LogDispatcher dispatcher = (LogDispatcher) getPluginContext().get(CONTEXT_KEY_LOG_DISPATCHER);
         if (dispatcher == null) {
             dispatcher = new LogDispatcher(docker, useColor);
-            dispatcher.addLogOutputStream(System.out);
             getPluginContext().put(CONTEXT_KEY_LOG_DISPATCHER, dispatcher);
         }
         return dispatcher;
@@ -301,12 +300,18 @@ public abstract class AbstractDockerMojo extends AbstractMojo implements Context
         LogConfiguration logConfig = extractLogConfiguration(imageConfiguration);
 
         addLogFormat(builder, logConfig);
+        addLogFile(builder, logConfig.getFileLocation());
         addPrefix(builder, logConfig.getPrefix(), imageConfiguration.getAlias(), containerId);
 
         builder.containerId(containerId)
                 .color(logConfig.getColor());
 
         return builder.build();
+    }
+
+    private void addLogFile(ContainerLogOutputSpec.Builder builder, String logFile){
+        String file = logFile;
+        builder.file(file);
     }
 
     private void addPrefix(ContainerLogOutputSpec.Builder builder, String logPrefix, String alias, String containerId) {
